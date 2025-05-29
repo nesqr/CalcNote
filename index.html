@@ -108,8 +108,8 @@
     </div>
 
     <div class="footer">
-      CalcNote v1.6 – por Nesti, para Farmaco 💊<br>
-      <small>Si no te lo acepta la tutora, ya sabes por qué 😅</small>
+      CalcNote v1.6.1 – por Nesti, para Farmaco 💊<br>
+  
     </div>
   </div>
 
@@ -163,29 +163,38 @@ const excepciones = {
     }
 
     function calcularNota() {
-      const notas = Array.from(document.querySelectorAll(".nota")).map(n => parseInt(n.value));
-      const clave = notas.slice().sort((a,b)=>a-b).join("-");
-      let notaFinal, notaExtra = "";
+  const notas = Array.from(document.querySelectorAll(".nota")).map(n => parseInt(n.value));
 
-      if (clave in excepciones) {
-        notaFinal = excepciones[clave];
-      } else {
-        const c5 = notas.filter(n => n === 5).length;
-        const c4 = notas.filter(n => n === 4).length;
-        const c3 = notas.filter(n => n === 3).length;
-        const c2 = notas.filter(n => n === 2).length;
-        const total = notas.length;
-        const correctas = c3 + c4 + c5;
+  // Normalizamos la clave: ordenamos las notas para reconocer combinaciones en cualquier orden
+  const clave = notas.slice().sort((a,b) => a - b).join("-");
 
-        if (correctas === total && c5 >= total * 0.6) {
-          notaFinal = 5;
-        } else if (c4 + c5 > c3) {
-          notaFinal = 4;
-        } else if (correctas >= Math.ceil(total * 0.7)) {
-          notaFinal = 3;
-        } else {
-          notaFinal = 2;
-        }
+  let notaFinal;
+  let notaExtra = "";
+
+  if (Object.hasOwn(excepciones, clave)) {
+    notaFinal = excepciones[clave];
+  } else {
+    const c5 = notas.filter(n => n === 5).length;
+    const c4 = notas.filter(n => n === 4).length;
+    const c3 = notas.filter(n => n === 3).length;
+    const total = notas.length;
+    const correctas = c3 + c4 + c5;
+
+    if (correctas === total && c5 >= total * 0.6) {
+      notaFinal = 5;
+    } else if (c4 + c5 > c3) {
+      notaFinal = 4;
+    } else if (correctas >= Math.ceil(total * 0.7)) {
+      notaFinal = 3;
+    } else {
+      notaFinal = 2;
+    }
+
+    notaExtra = "⚠️ Este resultado fue calculado siguiendo un patrón lógico basado en el instructivo oficial. ¡Revisar con criterio!";
+  }
+
+  mostrarResultado(notaFinal, notaExtra);
+}
 
         notaExtra = "⚠️ Este resultado fue calculado siguiendo un patrón lógico basado en el instructivo oficial. ¡Revisar con criterio!";
       }
