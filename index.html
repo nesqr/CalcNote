@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CalcNote v1.4</title>
+  <title>CalcNote v1.4.1</title>
   <link rel="manifest" href="manifest.json" />
   <style>
     :root {
@@ -11,12 +11,14 @@
       --fg: #222;
       --card: #ffffff;
       --btn: #e0e0e0;
+      --result: #efefef;
     }
     body.dark {
       --bg: #1e1e1e;
       --fg: #f5f5f5;
       --card: #2a2a2a;
       --btn: #444;
+      --result: #333;
     }
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -28,6 +30,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      transition: all 0.3s ease;
     }
     .container {
       background: var(--card);
@@ -53,14 +56,15 @@
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 8px;
-    }
-    button {
       background-color: var(--btn);
-      cursor: pointer;
+      color: var(--fg);
+    }
+    button:hover {
+      opacity: 0.95;
     }
     #resultadoContainer {
       margin-top: 16px;
-      background-color: #efefef;
+      background-color: var(--result);
       padding: 12px;
       border-radius: 8px;
       display: none;
@@ -81,7 +85,7 @@
 <body>
   <div class="container">
     <h1>CalcNote 📚💊</h1>
-    <div class="sub">“v1.4 – Sencilla, pero con amor... para las abuelas de Farmaco 👵💖”</div>
+    <div class="sub">“Sencilla, pero con amor... para las abuelas de Farmaco 👵💖”</div>
 
     <label for="numPreguntas">Número de preguntas:</label>
     <select id="numPreguntas">
@@ -104,13 +108,22 @@
     </div>
 
     <div class="footer">
-      CalcNote v1.4 – por Nesti, para Farmaco 💊<br>
+      CalcNote v1.4.1 – por Nesti, para Farmaco 💊<br>
       <small>Actualizado según instructivo oficial. 70% para aprobar ✅</small>
     </div>
   </div>
 
   <script>
+    const excepciones = {
+      "5-5-2": 3,
+      "4-4-2": 3,
+      "3-3-3": 3,
+      "5-4-3": 4,
+      // Puedes añadir más combinaciones aquí si surgen nuevas excepciones ministeriales 😅
+    };
+
     document.getElementById("numPreguntas").addEventListener("change", generarCampos);
+    
     function generarCampos() {
       const num = parseInt(document.getElementById("numPreguntas").value);
       const container = document.getElementById("preguntasContainer");
@@ -130,36 +143,52 @@
         container.appendChild(select);
       }
     }
+
     function calcularNota() {
       const notas = Array.from(document.querySelectorAll(".nota")).map(n => parseInt(n.value));
-      const correctas = notas.filter(n => n >= 3).length;
+      const clave = notas.sort((a,b)=>a-b).join("-");
+
+      if (excepciones[clave]) {
+        mostrarResultado(excepciones[clave], "(por patrón ministerial)");
+        return;
+      }
+
       const total = notas.length;
+      const correctas = notas.filter(n => n >= 3).length;
       const porcentaje = (correctas / total) * 100;
+      const c2 = notas.filter(n => n === 2).length;
+      const c5 = notas.filter(n => n === 5).length;
+      const c4 = notas.filter(n => n === 4).length;
+      const c3 = notas.filter(n => n === 3).length;
+
       let notaFinal = 2;
 
       if (porcentaje >= 70) {
-        const fives = notas.filter(n => n === 5).length;
-        const threes = notas.filter(n => n === 3).length;
-        const fours = notas.filter(n => n === 4).length;
-
-        if (correctas === total && fives >= total * 0.6) {
+        if (correctas === total && c5 >= total * 0.6) {
           notaFinal = 5;
-        } else if (fours + fives > threes) {
+        } else if (c4 + c5 > c3) {
           notaFinal = 4;
         } else {
           notaFinal = 3;
         }
       }
 
-      document.getElementById("resultado").innerText = `Nota final: ${notaFinal}`;
+      mostrarResultado(notaFinal);
+    }
+
+    function mostrarResultado(nota, extra = "") {
+      document.getElementById("resultado").innerText = `Nota final: ${nota} ${extra}`;
       document.getElementById("resultadoContainer").style.display = "block";
     }
+
     function toggleModoOscuro() {
       document.body.classList.toggle("dark");
     }
+
     function toggleFuente() {
       document.body.style.fontSize = document.body.style.fontSize === "20px" ? "16px" : "20px";
     }
+
     window.onload = generarCampos;
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
