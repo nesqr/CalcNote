@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CalcNote v1.4.1</title>
+  <title>CalcNote</title>
   <link rel="manifest" href="manifest.json" />
   <style>
     :root {
@@ -85,7 +85,7 @@
 <body>
   <div class="container">
     <h1>CalcNote 📚💊</h1>
-    <div class="sub">“Sencilla, pero con amor... para las abuelas de Farmaco 👵💖”</div>
+    <div class="sub">Sencilla, pero con amor... para las abuelas de Farmaco 👵💖</div>
 
     <label for="numPreguntas">Número de preguntas:</label>
     <select id="numPreguntas">
@@ -108,22 +108,40 @@
     </div>
 
     <div class="footer">
-      CalcNote v1.4.1 – por Nesti, para Farmaco 💊<br>
-      <small>Actualizado según instructivo oficial. 70% para aprobar ✅</small>
+      CalcNote v1.6 – por Nesti, para Farmaco 💊<br>
+      <small>Si no te lo acepta la tutora, ya sabes por qué 😅</small>
     </div>
   </div>
 
   <script>
-    const excepciones = {
-      "5-5-2": 3,
-      "4-4-2": 3,
-      "3-3-3": 3,
-      "5-4-3": 4,
-      // Puedes añadir más combinaciones aquí si surgen nuevas excepciones ministeriales 😅
+const excepciones = {
+      "2-2-2": 2, "3-3-3": 3, "4-4-4": 4, "5-5-5": 5,
+      "4-4-2": 3, "5-5-2": 3, "5-4-2": 3,
+      "4-3-2": 3, "5-3-2": 3, "5-2-2": 2,
+      "3-2-2": 2, "5-4-4": 5, "5-4-3": 4,
+      "3-3-2": 2, "4-4-3": 4,
+      "2-2-2-2-2": 2, "3-3-3-3-3": 3, "4-4-4-4-4": 4, "5-5-5-5-5": 5,
+      "3-3-3-2-2": 2, "4-4-4-2-2": 3, "5-5-5-2-2": 3,
+      "3-3-4-4-4": 4, "5-5-5-4-4": 5, "5-4-3-2-2": 3,
+      "5-4-4-3-3": 4, "5-3-3-2-2": 3, "5-5-4-2-2": 3,
+      "4-4-3-2-2": 3, "5-5-3-2-2": 3, "4-4-4-3-3": 4,
+      "5-5-5-3-3": 5, "3-3-3-3-2": 3, "5-5-2-2-2": 2,
+      "4-4-4-4-2": 4, "5-5-5-4-2": 4, "5-5-5-5-4": 5,
+      "5-5-5-4-3": 5, "4-4-4-3-2": 3, "3-3-3-2-2": 2,
+      "4-4-3-3-3": 4, "5-5-4-4-3": 5, "5-5-5-3-2": 4,
+      "4-4-4-2-2": 3, "5-4-4-2-2": 3, "5-5-4-3-2": 4,
+      "5-5-3-3-3": 5, "5-5-5-2-2": 3, "4-3-3-2-2": 3,
+      "3-3-2-2-2": 2, "5-4-4-4-4": 5, "4-4-3-3-2": 3,
+      "5-5-4-4-4": 5, "4-4-4-4-3": 4, "4-3-3-3-2": 3,
+      "4-4-2-2-2": 2, "5-4-3-3-2": 3, "5-5-4-4-2": 4,
+      "5-5-4-3-3": 5, "5-5-3-3-2": 4, "5-5-4-2-2": 3,
+      "5-5-2-2-2": 2,
+      "2-2-2-2-2-2-2": 2, "3-3-3-3-3-3-3": 3, "4-4-4-4-4-4-4": 4, "5-5-5-5-5-5-5": 5,
+      "5-5-5-5-5-4-3": 5, "5-5-4-4-3-3-2": 4, "5-4-3-2-2-2-2": 2
     };
 
     document.getElementById("numPreguntas").addEventListener("change", generarCampos);
-    
+
     function generarCampos() {
       const num = parseInt(document.getElementById("numPreguntas").value);
       const container = document.getElementById("preguntasContainer");
@@ -146,38 +164,37 @@
 
     function calcularNota() {
       const notas = Array.from(document.querySelectorAll(".nota")).map(n => parseInt(n.value));
-      const clave = notas.sort((a,b)=>a-b).join("-");
+      const clave = notas.slice().sort((a,b)=>a-b).join("-");
+      let notaFinal, notaExtra = "";
 
-      if (excepciones[clave]) {
-        mostrarResultado(excepciones[clave], "(por patrón ministerial)");
-        return;
-      }
+      if (clave in excepciones) {
+        notaFinal = excepciones[clave];
+      } else {
+        const c5 = notas.filter(n => n === 5).length;
+        const c4 = notas.filter(n => n === 4).length;
+        const c3 = notas.filter(n => n === 3).length;
+        const c2 = notas.filter(n => n === 2).length;
+        const total = notas.length;
+        const correctas = c3 + c4 + c5;
 
-      const total = notas.length;
-      const correctas = notas.filter(n => n >= 3).length;
-      const porcentaje = (correctas / total) * 100;
-      const c2 = notas.filter(n => n === 2).length;
-      const c5 = notas.filter(n => n === 5).length;
-      const c4 = notas.filter(n => n === 4).length;
-      const c3 = notas.filter(n => n === 3).length;
-
-      let notaFinal = 2;
-
-      if (porcentaje >= 70) {
         if (correctas === total && c5 >= total * 0.6) {
           notaFinal = 5;
         } else if (c4 + c5 > c3) {
           notaFinal = 4;
-        } else {
+        } else if (correctas >= Math.ceil(total * 0.7)) {
           notaFinal = 3;
+        } else {
+          notaFinal = 2;
         }
+
+        notaExtra = "⚠️ Este resultado fue calculado siguiendo un patrón lógico basado en el instructivo oficial. ¡Revisar con criterio!";
       }
 
-      mostrarResultado(notaFinal);
+      mostrarResultado(notaFinal, notaExtra);
     }
 
     function mostrarResultado(nota, extra = "") {
-      document.getElementById("resultado").innerText = `Nota final: ${nota} ${extra}`;
+      document.getElementById("resultado").innerHTML = `<strong>Nota final: ${nota}</strong><br>${extra}`;
       document.getElementById("resultadoContainer").style.display = "block";
     }
 
@@ -193,6 +210,7 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
+    
   </script>
 </body>
 </html>
