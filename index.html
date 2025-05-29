@@ -108,7 +108,7 @@
     </div>
 
     <div class="footer">
-      CalcNote v1.6.1 – por Nesti, para Farmaco 💊<br>
+      CalcNote v1.6.2 – por Nesti, para Farmaco 💊<br>
   
     </div>
   </div>
@@ -140,86 +140,78 @@ const excepciones = {
       "5-5-5-5-5-4-3": 5, "5-5-4-4-3-3-2": 4, "5-4-3-2-2-2-2": 2
     };
 
-    document.getElementById("numPreguntas").addEventListener("change", generarCampos);
+  document.getElementById("numPreguntas").addEventListener("change", generarCampos);
 
-    function generarCampos() {
-      const num = parseInt(document.getElementById("numPreguntas").value);
-      const container = document.getElementById("preguntasContainer");
-      container.innerHTML = "";
-      for (let i = 0; i < num; i++) {
-        const label = document.createElement("label");
-        label.innerText = "Pregunta " + (i + 1);
-        const select = document.createElement("select");
-        select.className = "nota";
-        [5,4,3,2].forEach(n => {
-          const option = document.createElement("option");
-          option.value = n;
-          option.innerText = n;
-          select.appendChild(option);
-        });
-        container.appendChild(label);
-        container.appendChild(select);
-      }
+  function generarCampos() {
+    const num = parseInt(document.getElementById("numPreguntas").value);
+    const container = document.getElementById("preguntasContainer");
+    container.innerHTML = "";
+    for (let i = 0; i < num; i++) {
+      const label = document.createElement("label");
+      label.innerText = "Pregunta " + (i + 1);
+      const select = document.createElement("select");
+      select.className = "nota";
+      [5, 4, 3, 2].forEach(n => {
+        const option = document.createElement("option");
+        option.value = n;
+        option.innerText = n;
+        select.appendChild(option);
+      });
+      container.appendChild(label);
+      container.appendChild(select);
     }
-
-    function calcularNota() {
-  const notas = Array.from(document.querySelectorAll(".nota")).map(n => parseInt(n.value));
-
-  // Normalizamos la clave: ordenamos las notas para reconocer combinaciones en cualquier orden
-  const clave = notas.slice().sort((a,b) => a - b).join("-");
-
-  let notaFinal;
-  let notaExtra = "";
-
-  if (Object.hasOwn(excepciones, clave)) {
-    notaFinal = excepciones[clave];
-  } else {
-    const c5 = notas.filter(n => n === 5).length;
-    const c4 = notas.filter(n => n === 4).length;
-    const c3 = notas.filter(n => n === 3).length;
-    const total = notas.length;
-    const correctas = c3 + c4 + c5;
-
-    if (correctas === total && c5 >= total * 0.6) {
-      notaFinal = 5;
-    } else if (c4 + c5 > c3) {
-      notaFinal = 4;
-    } else if (correctas >= Math.ceil(total * 0.7)) {
-      notaFinal = 3;
-    } else {
-      notaFinal = 2;
-    }
-
-    notaExtra = "⚠️ Este resultado fue calculado siguiendo un patrón lógico basado en el instructivo oficial. ¡Revisar con criterio!";
   }
 
-  mostrarResultado(notaFinal, notaExtra);
-}
+  function calcularNota() {
+    const notas = Array.from(document.querySelectorAll(".nota")).map(n => parseInt(n.value));
+    const clave = notas.slice().sort((a,b) => a - b).join("-");
 
-        notaExtra = "⚠️ Este resultado fue calculado siguiendo un patrón lógico basado en el instructivo oficial. ¡Revisar con criterio!";
+    let notaFinal;
+    let notaExtra = "";
+
+    if (Object.hasOwn(excepciones, clave)) {
+      notaFinal = excepciones[clave];
+    } else {
+      const c5 = notas.filter(n => n === 5).length;
+      const c4 = notas.filter(n => n === 4).length;
+      const c3 = notas.filter(n => n === 3).length;
+      const total = notas.length;
+      const correctas = c3 + c4 + c5;
+
+      if (correctas === total && c5 >= total * 0.6) {
+        notaFinal = 5;
+      } else if (c4 + c5 > c3) {
+        notaFinal = 4;
+      } else if (correctas >= Math.ceil(total * 0.7)) {
+        notaFinal = 3;
+      } else {
+        notaFinal = 2;
       }
 
-      mostrarResultado(notaFinal, notaExtra);
+      notaExtra = "⚠️ Este resultado fue calculado siguiendo un patrón lógico basado en el instructivo oficial. ¡Revisar con criterio!";
     }
 
-    function mostrarResultado(nota, extra = "") {
-      document.getElementById("resultado").innerHTML = `<strong>Nota final: ${nota}</strong><br>${extra}`;
-      document.getElementById("resultadoContainer").style.display = "block";
-    }
+    mostrarResultado(notaFinal, notaExtra);
+  }
 
-    function toggleModoOscuro() {
-      document.body.classList.toggle("dark");
-    }
+  function mostrarResultado(nota, extra = "") {
+    document.getElementById("resultado").innerHTML = `<strong>Nota final: ${nota}</strong><br>${extra}`;
+    document.getElementById("resultadoContainer").style.display = "block";
+  }
 
-    function toggleFuente() {
-      document.body.style.fontSize = document.body.style.fontSize === "20px" ? "16px" : "20px";
-    }
+  function toggleModoOscuro() {
+    document.body.classList.toggle("dark");
+  }
 
-    window.onload = generarCampos;
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-    
-  </script>
-</body>
-</html>
+  function toggleFuente() {
+    document.body.style.fontSize = document.body.style.fontSize === "20px" ? "16px" : "20px";
+  }
+
+  window.onload = generarCampos;
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+
+  
