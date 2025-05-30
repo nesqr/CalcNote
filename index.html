@@ -108,12 +108,12 @@
     </div>
 
     <div class="footer">
-      CalcNote v1.8 – por Nesti, para Farmaco 💊<br>
+      CalcNote v1.8.1 – por Nesti, para Farmaco 💊<br>
       <small>Si no te lo acepta la tutora, ya sabes por qué 😅</small>
     </div>
   </div>
-
-<script>
+  
+  <script>
   document.getElementById("numPreguntas").addEventListener("change", generarCampos);
 
   function generarCampos() {
@@ -144,19 +144,27 @@
 
     let notaFinal = 2;
 
-    if (count[2] >= 2) {
-      notaFinal = 2;
-    } else if (count[2] === 1 && total === 3) {
+    // Excepción: 2 con nota 2 y 5 con nota 5 → nota 3
+    if (total === 7 && count[2] === 2 && count[5] === 5) {
       notaFinal = 3;
-    } else if (
+    }
+    else if (count[2] >= 2) {
+      notaFinal = 2;
+    }
+    else if (count[2] === 1 && total === 3) {
+      notaFinal = 3;
+    }
+    else if (
       (total <= 5 && count[5] === total) ||
       (total <= 5 && count[5] === total - 1 && count[2] === 0 && count[3] === 0 && count[4] === 1) ||
       (total === 7 && count[5] >= 5 && count[2] <= 1 && count[4] <= 2 && count[3] === 0)
     ) {
       notaFinal = 5;
-    } else if ((count[4] + count[5]) / total >= 0.5) {
+    }
+    else if ((count[4] + count[5]) / total >= 0.5) {
       notaFinal = 4;
-    } else if ((count[3] + count[4] + count[5]) / total >= 0.7) {
+    }
+    else if ((count[3] + count[4] + count[5]) / total >= 0.7) {
       notaFinal = 3;
     }
 
