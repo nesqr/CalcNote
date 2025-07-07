@@ -121,7 +121,7 @@
     </div>
 
     <div class="footer">
-      CalcNote v2.2.1 – por Nesti, para Farmaco 💊<br>
+      CalcNote v2.2.2 – por Nesti, para Farmaco 💊<br>
       <small>(╯°□°）╯︵ ┻━┻</small>
     </div>
   </div>
@@ -164,7 +164,8 @@ function calcularNota() {
 
   let notaFinal = 2;
 
-  if (total === 7 && count[2] === 2 && count[5] === 5) {
+  // EXCEPCIÓN CLAVE 7: 2 respuestas con 2 → nota 3 automática
+  if (total === 7 && count[2] === 2) {
     notaFinal = 3;
   }
   else if (
@@ -191,7 +192,8 @@ function calcularNota() {
     notaFinal = 3;
   }
 
-  mostrarResultado("<strong>Nota final: " + notaFinal + "</strong>");
+  mostrarResultado(`<strong>Nota final: ${notaFinal}</strong><br><br>
+  <em>Tómese en consideración que se ha aplicado un algoritmo utilizando la Instrucción 3/2015 como base y contemplando las opciones que no están reflejadas en este documento.<br>⚠️ Algunos resultados pueden contener errores ⚠️</em>`);
 }
 
 function mostrarResultado(mensaje) {
