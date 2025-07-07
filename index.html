@@ -89,7 +89,7 @@
     <div class="sub">Sencilla, pero con amor... para las abuelas de Farmaco 👵💖</div>
 
     <label for="numPreguntas">Número de preguntas:</label>
-    <select id="numPreguntas">
+    <select id="numPreguntas" onchange="actualizarOpciones()">
       <option value="3">3</option>
       <option value="5">5</option>
       <option value="7">7</option>
@@ -98,28 +98,16 @@
     <h3>Agrupación de respuestas</h3>
 
     <label for="n5">¿Cuántas respuestas fueron 5?</label>
-    <select id="n5">
-      <option value="0">0</option>
-      ${[...Array(7).keys()].map(i => `<option value="${i+1}">${i+1}</option>`).join("")}
-    </select>
+    <select id="n5"></select>
 
     <label for="n4">¿Cuántas respuestas fueron 4?</label>
-    <select id="n4">
-      <option value="0">0</option>
-      ${[...Array(7).keys()].map(i => `<option value="${i+1}">${i+1}</option>`).join("")}
-    </select>
+    <select id="n4"></select>
 
     <label for="n3">¿Cuántas respuestas fueron 3?</label>
-    <select id="n3">
-      <option value="0">0</option>
-      ${[...Array(7).keys()].map(i => `<option value="${i+1}">${i+1}</option>`).join("")}
-    </select>
+    <select id="n3"></select>
 
     <label for="n2">¿Cuántas respuestas fueron 2?</label>
-    <select id="n2">
-      <option value="0">0</option>
-      ${[...Array(7).keys()].map(i => `<option value="${i+1}">${i+1}</option>`).join("")}
-    </select>
+    <select id="n2"></select>
 
     <button onclick="calcularNota()">Calcular Nota</button>
     <div class="control-group">
@@ -139,6 +127,21 @@
   </div>
 
 <script>
+function actualizarOpciones() {
+  const total = parseInt(document.getElementById("numPreguntas").value);
+  ['n5', 'n4', 'n3', 'n2'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = "";
+    for (let i = 0; i <= total; i++) {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = i;
+      sel.appendChild(opt);
+    }
+  });
+}
+window.onload = actualizarOpciones;
+
 function calcularNota() {
   const total = parseInt(document.getElementById("numPreguntas").value);
   const count = {
@@ -149,8 +152,13 @@ function calcularNota() {
   };
 
   const suma = count[2] + count[3] + count[4] + count[5];
-  if (suma !== total) {
-    mostrarResultado("⚠️ El total de respuestas no coincide con el número de preguntas.");
+
+  if (suma > total) {
+    mostrarResultado("⚠️ Te pasaste: hay más respuestas que preguntas.");
+    return;
+  }
+  if (suma < total) {
+    mostrarResultado("⚠️ Faltan respuestas. Debes indicar exactamente " + total + " en total.");
     return;
   }
 
